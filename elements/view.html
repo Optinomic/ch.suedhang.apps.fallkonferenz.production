@@ -1,0 +1,424 @@
+<link rel="import" href="optinomic-title/optinomic-title.html">
+<link rel="import" href="optinomic-chart-profile/optinomic-chart-profile.html">
+<link rel="import" href="optinomic-pdfmake/optinomic-pdfmake.html">
+<link rel="import" href="optinomic-elements-helpers/optinomic-app-info.html">
+<link rel="import" href="optinomic-elements-helpers/optinomic-indication.html">
+<link rel="import" href="iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="iron-collapse/iron-collapse.html">
+<dom-module id="optinomic-template">
+    <template>
+        <style include="shared-styles">
+         :host {
+            display: block;
+            padding: 6px;
+        }
+
+        vaadin-grid {
+            height: auto;
+        }
+
+        .full_grid {
+            height: 100%;
+            border-left-style: none;
+            border-right-style: none;
+            border-bottom-style: none;
+        }
+
+        .readme_container {
+            background-color: #FAFAFA;
+            border-style: solid;
+            border-color: #EEEEEE;
+            border-width: 1px;
+            border-radius: 3px;
+            padding: 24px;
+        }
+
+        .content_block {
+            margin-top: -48px;
+            margin-bottom: 48px;
+            border-top-color: #BDBDBD;
+            border-top-style: solid;
+            border-top-width: 1px;
+        }
+
+        .scroll_top {
+            text-align: right;
+            cursor: pointer;
+            margin-top: 24px;
+            margin-bottom: 0px !important;
+            padding-bottom: 0px !important;
+        }
+        </style>
+        <div id="top" class="layout horizontal flex">
+            <div class="flex">
+                <optinomic-title h1="[[_d.title]]" h2="[[_d.subtitle]]" h3="[[_d.name]]"></optinomic-title>
+            </div>
+            <div>
+                <template is="dom-if" if="[[_pdf_ready]]">
+                    <paper-icon-button class="indigo" on-tap="__toggle_print" icon="print"></paper-icon-button>
+                </template>
+            </div>
+        </div>
+        <template is="dom-if" if="[[_d.init_done]]">
+            <template is="dom-if" if="[[_pdf_ready]]">
+                <iron-collapse id="collapse_print" horizontal>
+                    <div style="margin-left:18px;">
+                        <optinomic-pdfmake header-left="[[_current_patient.extras.secure]]" header-right="[[_clinic.clinic_name]]" footer-left="[[_d.title]]" document-title="[[_d.title]]" content="[[_pdf_content]]" loading-string="[[_d.loading_string]]" hide-logo></optinomic-pdfmake>
+                    </div>
+                </iron-collapse>
+            </template>
+            <div id="toc">
+                <h3 style="margin-left:24px;">Inhaltsverzeichnis</h3>
+                <nav id="toc" style="margin-top:-6px;margin-bottom:24px;">
+                    <ol>
+                        <template is="dom-repeat" items="[[_d.toc]]">
+                            <li><a on-tap="__scroll_target" style="cursor:pointer;">[[item.name]]</a></li>
+                        </template>
+                    </ol>
+                </nav>
+            </div>
+            <div id="app_info" style="margin-bottom:54px;">
+                <optinomic-app-info app-id="[[_current_app.identifier]]" on-pdfready-app-info="_event_pdf_app_info"></optinomic-app-info>
+            </div>
+            <div id="main_content">
+                <p class="caption scroll_top" on-tap="__scroll_top">&nbsp;</p>
+                <div id="content_actinfo" class="content_block">
+                    <element-actinfo app-id-eintritt="[[_d.data_app.actinfo_ein]]" app-id-austritt="[[_d.data_app.actinfo_aus]]" on-pdfready="_event_pdf_full_actinfo"></element-actinfo>
+                    <p class="caption scroll_top" on-tap="__scroll_top">[&nbsp;Inhaltsverzeichnis&nbsp;]</p>
+                </div>
+                <div id="content_tmt" class="content_block">
+                    <element-tmt app-id="[[_d.data_app.tmt]]" on-pdfready="_event_pdf_full_tmt"></element-tmt>
+                    <p class="caption scroll_top" on-tap="__scroll_top">[&nbsp;Inhaltsverzeichnis&nbsp;]</p>
+                </div>
+                <div id="content_asrs" class="content_block">
+                    <element-asrs app-id="[[_d.data_app.asrs]]" on-pdfready="_event_pdf_full_asrs"></element-asrs>
+                    <p class="caption scroll_top" on-tap="__scroll_top">[&nbsp;Inhaltsverzeichnis&nbsp;]</p>
+                </div>
+                <div id="content_aase" class="content_block">
+                    <element-aase app-id="[[_d.data_app.aase]]" on-pdfready="_event_pdf_full_aase"></element-aase>
+                    <p class="caption scroll_top" on-tap="__scroll_top">[&nbsp;Inhaltsverzeichnis&nbsp;]</p>
+                </div>
+                <div id="content_bscl" class="content_block">
+                    <element-bscl app-id="[[_d.data_app.bscl]]" on-pdfready="_event_pdf_full_bscl"></element-bscl>
+                    <p class="caption scroll_top" on-tap="__scroll_top">[&nbsp;Inhaltsverzeichnis&nbsp;]</p>
+                </div>
+                <div id="content_bdi" class="content_block">
+                    <element-bdi app-id="[[_d.data_app.bdi]]" on-pdfready="_event_pdf_full_bdi"></element-bdi>
+                    <p class="caption scroll_top" on-tap="__scroll_top">[&nbsp;Inhaltsverzeichnis&nbsp;]</p>
+                </div>
+                <div id="content_isk" class="content_block">
+                    <element-isk app-id="[[_d.data_app.isk]]" on-pdfready="_event_pdf_full_isk"></element-isk>
+                    <p class="caption scroll_top" on-tap="__scroll_top">[&nbsp;Inhaltsverzeichnis&nbsp;]</p>
+                </div>
+                <div id="content_sci" class="content_block">
+                    <element-sci app-id="[[_d.data_app.sci]]" on-pdfready="_event_pdf_full_sci"></element-sci>
+                    <p class="caption scroll_top" on-tap="__scroll_top">[&nbsp;Inhaltsverzeichnis&nbsp;]</p>
+                </div>
+                <div id="content_whoqol" class="content_block">
+                    <element-whoqol app-id="[[_d.data_app.whoqol]]" on-pdfready="_event_pdf_full_whoqol"></element-whoqol>
+                    <p class="caption scroll_top" on-tap="__scroll_top">[&nbsp;Inhaltsverzeichnis&nbsp;]</p>
+                </div>
+            </div>
+        </template>
+        <template is="dom-if" if="[[!_d.init_done]]">
+            <optinomic-indication sign=":" title="Initialisiere..." color="#3F51B5"></optinomic-indication>
+        </template>
+    </template>
+    <script>
+    Polymer({
+        is: 'optinomic-template',
+
+        behaviors: [ReduxBehavior, AsyncActionsBehavior, optinomicApp, makepdfBehavior],
+
+        __opapp_include(_properties.js)
+
+
+        // -----------------------------
+        // Functions
+        // -----------------------------
+
+        _init: function() {
+
+            var d = {};
+
+            d.name = "Fallkonferenz";
+            d.title = "Fragebogenauswertung";
+            d.subtitle = "Eine Übersicht der wichtigsten Ergebnisse und Auswertungen.";
+
+            __opapp_include(_data_toc.js)
+
+            d.init_done = true;
+            this.set('_d', d);
+            this._d = d;
+            console.log('INIT _d', this._d);
+        },
+
+        _buildPDF: function() {
+            var jobs_count = 0;
+            var jobs_total = 10;
+            var jobs_done = {};
+            var build_full = true;
+            var loading_string = jobs_count + "/" + jobs_total;
+
+            this.set('_d.loading_string', loading_string);
+
+            // ------------------------------
+            // Create PDF
+            // ------------------------------
+
+            var do_build = function() {
+
+
+                this._pdf_content = null;
+                var _pdf_content = [];
+                var d = this.get('_d');
+
+
+                // --------------------------
+                // Build PDF
+                // --------------------------
+
+                if (build_full) {
+                    _pdf_content.push(this._suedhang_logo_anschrift());
+
+                    // ------------------------------------------
+                    // Titelseite
+                    // ------------------------------------------
+                    title_block_stack = [];
+                    title_block_stack.push(this._title(d.title, d.subtitle));
+                    title_block_stack.push({ "text": "Wir berichten über den Aufenthalt von " + this._current_patient.extras.anrede + " vom " + this._current_stay.extras.from_to + ".", "style": "p" });
+                    title_block_stack.push(this._spacer(96));
+                    title_block_stack.push(this._horizontalLine(62, "#F5F5F5"));
+                    title_block_stack.push(this._stamp(this._current_patient.extras.full_name, 18));
+                    title_block_stack.push(this._horizontalLine(62, "#F5F5F5"));
+                    var title_block = {
+                        "id": "document_title",
+                        "alignment": "left",
+                        "margin": [0, 18, 0, 0],
+                        "columns": [{}, {
+                            "width": "480",
+                            "stack": title_block_stack
+                        }]
+                    };
+                    _pdf_content.push(title_block);
+                    _pdf_content.push(this._pageBreak());
+
+                    // ------------------------------------------
+                    // Inhalt
+                    // ------------------------------------------
+                    _pdf_content.push(this._pdf_full_actinfo);
+
+                    _pdf_content.push(this._pdf_full_tmt);
+
+                    _pdf_content.push(this._pdf_full_bdi);
+
+                    _pdf_content.push(this._pageBreak());
+                    _pdf_content.push(this._pdf_full_aase);
+
+                    _pdf_content.push(this._pdf_full_whoqol);
+
+                    _pdf_content.push(this._pageBreak());
+                    _pdf_content.push(this._pdf_full_bscl);
+
+                    _pdf_content.push(this._pdf_full_isk);
+
+                    _pdf_content.push(this._pageBreak());
+                    _pdf_content.push(this._pdf_full_sci);
+
+
+                } else {
+                    _pdf_content.push(this._spacer(120));
+                    _pdf_content.push(this._title(d.title, d.subtitle + " (" + d.name + ")"));
+                    _pdf_content.push(this._spacer(12));
+                    _pdf_content.push(this._indication("!", "Uuups, hier ging etwas schief!", "#F44336"));
+                };
+
+                // --------------------------
+                // Store
+                // --------------------------
+                this._pdf_content = _pdf_content;
+                this.set('_pdf_ready', true);
+                this.fire('pdfready', _pdf_content);
+
+                console.log('(PDF | Ready) Fallkonferenz: ', this._pdf_content);
+
+                // Open "Collapse" when ready | Only in "Master-Document".
+                setTimeout(function() {
+                    this.__toggle_print();
+                }.bind(this), 50);
+            }.bind(this);
+
+
+            // ------------------------------
+            // Check if all content is ready
+            // ------------------------------
+
+            var countProperties = function(obj) {
+                var count = 0;
+
+                for (var prop in obj) {
+                    if (obj.hasOwnProperty(prop))
+                        ++count;
+                }
+
+                return count;
+            }
+
+            var check = function() {
+                if (this._pdf_ready !== true) {
+                    jobs_count = countProperties(jobs_done);
+                    loading_string = jobs_count + "/" + jobs_total;
+                    this.set('_d.loading_string', loading_string);
+
+                    if (jobs_count >= jobs_total) {
+                        do_build();
+                    };
+                };
+            }.bind(this);
+
+
+            //  Jobs Done?
+            //  Check incoming Data
+
+
+            if ((this._pdf_full_actinfo !== undefined) && (this._pdf_full_actinfo !== null)) {
+                jobs_done._pdf_full_actinfo = true;
+                check();
+            };
+
+            if ((this._pdf_full_tmt !== undefined) && (this._pdf_full_tmt !== null)) {
+                jobs_done._pdf_full_tmt = true;
+                check();
+            };
+
+            if ((this._pdf_full_bscl !== undefined) && (this._pdf_full_bscl !== null)) {
+                jobs_done._pdf_full_bscl = true;
+                check();
+            };
+
+            if ((this._pdf_full_asrs !== undefined) && (this._pdf_full_asrs !== null)) {
+                jobs_done._pdf_full_asrs = true;
+                check();
+            };
+
+            if ((this._pdf_full_bdi !== undefined) && (this._pdf_full_bdi !== null)) {
+                jobs_done._pdf_full_bdi = true;
+                check();
+            };
+
+            if ((this._pdf_full_isk !== undefined) && (this._pdf_full_isk !== null)) {
+                jobs_done._pdf_full_isk = true;
+                check();
+            };
+
+            if ((this._pdf_full_sci !== undefined) && (this._pdf_full_sci !== null)) {
+                jobs_done._pdf_full_sci = true;
+                check();
+            };
+
+            if ((this._pdf_full_whoqol !== undefined) && (this._pdf_full_whoqol !== null)) {
+                jobs_done._pdf_full_whoqol = true;
+                check();
+            };
+
+            if ((this._pdf_full_aase !== undefined) && (this._pdf_full_aase !== null)) {
+                jobs_done._pdf_full_aase = true;
+                check();
+            };
+
+
+            if ((this._pdf_app_info !== undefined) && (this._pdf_app_info !== null)) {
+                jobs_done._pdf_app_info = true;
+                check();
+            };
+        },
+
+
+        // -----------------------------
+        // User-Click Functions
+        // -----------------------------
+
+        __toggle_print: function() {
+            var print_button = this.$$('#collapse_print');
+            if ((print_button !== null) && (print_button !== undefined)) {
+                print_button.toggle();
+            };
+        },
+
+        __scroll_target: function(e) {
+            var model = e.model.get('item');
+            console.log('(SCROLL)', model);
+            var target = this.$$('#' + model.anchor);
+            target.scrollIntoView();
+        },
+
+        __scroll_top: function() {
+            var top = this.$$('#top');
+            console.log('(SCROLL) top');
+            top.scrollIntoView();
+        },
+
+
+        // -----------------------------
+        // Event Handler's
+        // -----------------------------
+
+        _event_pdf_full_actinfo: function(e) {
+            this.set('_pdf_full_actinfo', e.detail);
+        },
+
+        _event_pdf_full_tmt: function(e) {
+            this.set('_pdf_full_tmt', e.detail);
+        },
+
+        _event_pdf_full_bscl: function(e) {
+            this.set('_pdf_full_bscl', e.detail);
+        },
+
+        _event_pdf_full_asrs: function(e) {
+            this.set('_pdf_full_asrs', e.detail);
+        },
+
+        _event_pdf_full_bdi: function(e) {
+            this.set('_pdf_full_bdi', e.detail);
+        },
+
+        _event_pdf_full_whoqol: function(e) {
+            this.set('_pdf_full_whoqol', e.detail);
+        },
+
+        _event_pdf_full_isk: function(e) {
+            this.set('_pdf_full_isk', e.detail);
+        },
+
+        _event_pdf_full_sci: function(e) {
+            this.set('_pdf_full_sci', e.detail);
+        },
+
+        _event_pdf_full_aase: function(e) {
+            this.set('_pdf_full_aase', e.detail);
+        },
+
+        _event_pdf_app_info: function(e) {
+            this.set('_pdf_app_info', e.detail);
+        },
+
+
+
+        // -----------------------------
+        // Lifecycle
+        // -----------------------------
+
+        _loadData: function() {
+            this.dispatch('actionGetCurrentPatient');
+            this.dispatch('actionGetCurrentPatientStays');
+        },
+
+        ready: function() {
+            this._loadData();
+            this._init();
+        }
+    });
+    </script>
+</dom-module>
