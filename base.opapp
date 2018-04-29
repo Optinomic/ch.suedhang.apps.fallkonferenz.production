@@ -25,7 +25,7 @@ website = http://www.optinomic.com/
 __opapp_include(readme.md)
 
 [template overview 6 7]
-__opapp_include(../lib/polymer/index.m4)
+__opapp_include(lib/polymer/index.m4)
 __opapp_include(../ch.suedhang.apps.actinfo_ein/elements/actinfo-problemsubstanzen.html)
 __opapp_include(../ch.suedhang.apps.actinfo_ein/elements/element-actinfo.html)
 __opapp_include(../ch.suedhang.apps.tmt_V3/elements/element-tmt.html)
